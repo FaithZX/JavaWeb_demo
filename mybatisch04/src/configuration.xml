@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 使用缓存 -->
+	<settings>
+		<setting name="cacheEnabled" value="true"/>
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="com.entity.User" alias="User"/>
+		<typeAlias type="com.entity3.Department" alias="Department"/>
+		<typeAlias type="com.entity3.Employee" alias="Employee"/>
+	</typeAliases>
+	
+	
+	<environments default="development"> 
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://localhost:3306/test" />
+				<property name="username" value="root" />
+				<property name="password" value="root" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<!-- <mapper resource="org/mybatis/example/BlogMapper.xml" /> -->
+		<mapper resource="com/dao/UserMapper.xml" />
+		
+		<mapper resource="com/dao/DepartmentMapper.xml" />
+		
+		<!-- 如果是面向接口的时候  是不需要 Mapper.xml 文件的  所以需要直接指向相对应的接口类 -->
+		<!-- <mapper class="com.dao.DepartmentDao"/> -->
+	</mappers>
+</configuration>
