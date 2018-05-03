@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- 开启注解模式 -->
+	<context:annotation-config></context:annotation-config>
+	
+	<!-- 开启包扫描 -->
+	<context:component-scan base-package="com.zx.service.impl"></context:component-scan>
+	<context:component-scan base-package="com.zx.dao.impl"></context:component-scan>
+
+	<!-- 读取数据库配置文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${driver}"></property>
+		<property name="url" value="${url}"></property>
+		<property name="username" value="${usernamex}"></property>
+		<property name="password" value="${passwordx}"></property>
+	</bean>
+	
+	<!-- 配置事物管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 开启注解驱动 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- 任务调度处理类工厂 -->
+	<!-- 
+	<bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.timer4.QuartzTimer"></property>
+	</bean>
+	表达式触发器工厂
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="jobDetail"></property>
+		<property name="cronExpression" value="0/5 13/1 0-23 * * ? *"></property>
+	</bean>
+	任务调度计划工厂
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTrigger"/>				
+			</list>
+		</property>
+	</bean> 
+	-->
+	<!-- 配置sqlSession 工厂 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 给com.zx.entity包下面的所有的实体类配置别名  别名就是类的简单名称 -->
+		<property name="typeAliasesPackage" value="com.zx.entity"></property>
+	</bean>
+	
+	<!-- 配置mybatis的xml文件扫描 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.zx.dao"></property>
+	</bean>
+	
+	
+
+</beans>
