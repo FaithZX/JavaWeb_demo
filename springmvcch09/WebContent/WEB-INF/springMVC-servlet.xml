@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	
+	<!-- 配置包扫描  base-package="com.zx.controller" 指定哪一个包-->
+	<context:component-scan base-package="com.zx.controller"></context:component-scan>
+	
+	<!-- Spring MVC不处理静态资源 -->
+	<mvc:default-servlet-handler/>
+	
+	<!-- 开启注解模式驱动 -->
+	<mvc:annotation-driven conversion-service="conversionService"/>
+	<!-- <mvc:annotation-driven/> -->
+	
+	<!-- 配置静态资源  Spring MVC就不会做拦截 -->
+	<mvc:resources location="/" mapping="**/*.png"/>
+	<mvc:resources location="/" mapping="*.jpg"/>
+	<mvc:resources location="/" mapping="*.css"/>
+	<mvc:resources location="/" mapping="*.js"/>
+	<mvc:resources location="/" mapping="*.ico"/>
+	<mvc:resources location="/" mapping="*.gif"/>
+	
+	
+	<!-- 日期转换工厂 -->
+	<!-- <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="com.converter.StringDate">
+					<constructor-arg type="java.lang.String" value="yyyy-MM-dd"></constructor-arg>
+				</bean>
+			</list>
+		</property>
+	</bean> -->
+	
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="formatters">
+			<list>
+				<bean class="com.converter2.StringDate2">
+					<constructor-arg type="java.lang.String" value="yyyy-MM-dd"></constructor-arg>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 配置国际化资源    -->
+<!-- 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		指定国际化资源的路径
+		<property name="basename" value="/WEB-INF/resources/messages"></property>
+		配置国际化资源字符编码格式
+		<property name="defaultEncoding" value="UTF-8"></property>
+		配置缓存   每过120秒刷新一次
+		<property name="cacheSeconds" value="120"></property>
+	</bean>
+	 -->
+	
+	<!-- 配置返回视图的统一解析的前后缀    WEB-INF/jsp/index.jsp-->
+	<bean id="resourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 前缀 -->
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<!-- 后缀 -->
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	
+</beans>
