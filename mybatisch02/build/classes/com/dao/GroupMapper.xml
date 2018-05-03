@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.dao.GroupDao">
+		<!-- 插入 -->
+		<insert id="addUser" useGeneratedKeys="true" keyProperty="userId">
+			insert into user2 (userName) values (#{userName})
+		</insert>
+		<insert id="addGroup" useGeneratedKeys="true" keyProperty="groupId">
+			insert into groups (groupName) values (#{groupName})
+		</insert>
+		<insert id="addGroupUser" parameterType="map" useGeneratedKeys="true" keyProperty="group_user_id" >
+			insert into group_user (groupId,userId) values (#{groupId},#{userId})
+		</insert>
+	
+		<!-- 查询 -->
+		<resultMap type="Group" id="GroupList">
+			<id column="groupId" property="groupId"/>
+			<result column="groupName" property="groupName"/>
+			<collection property="userSet" ofType="User" >
+				<id column="userId" property="userId"/>
+				<result column="userName" property="userName"/>
+			</collection>
+		</resultMap>
+		
+		<select id="selectGroup" resultMap="GroupList">
+			select * from groups g inner join group_user gu 
+						on g.groupId = gu.groupId 
+				inner join user2 u on u.userId = gu.userId where g.groupId = 5
+		</select>		
+		
+		<!-- 删除 -->
+		<delete id="deleteGroupUser">
+			delete from group_user where groupId = #{id}
+		</delete>
+		<delete id="deleteGroup">
+			delete from groups where groupId = #{id}
+		</delete>
+		
+	
+	
+	
+	
+	
+	
+	
+</mapper>

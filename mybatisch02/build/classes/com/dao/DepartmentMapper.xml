@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.dao.DepartmentDao">
+	
+	
+	<!-- 一对多查询 -->
+	<resultMap type="Department" id="DepartmentList">
+		<id column="depId" property="depId"/>
+		<result column="depName" property="depName"/>
+		<collection property="empSet" column="depId" javaType="Employee">
+			<id column="empId" property="empId"/>
+			<result column="empName" property="empName"/>
+		</collection>
+	</resultMap>
+
+	<select id="selectDepat" resultMap="DepartmentList">
+		<![CDATA[
+			select * from department d inner join employee e on d.depId = e.depId
+		]]>
+	</select>
+	
+	
+	<!-- 一对多插入 -->
+	<insert id="addDep" useGeneratedKeys="true" keyProperty="depId">
+		<![CDATA[
+			insert into department(depName)values(#{depName})
+		]]>
+	</insert>
+	<insert id="addEmp" useGeneratedKeys="true" keyProperty="depId">
+		<![CDATA[
+			insert into employee(empName,depId)values(#{empName},#{depat.depId})
+		]]>
+	</insert>
+	
+	
+	
+	
+	
+	
+	
+</mapper>

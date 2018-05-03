@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- com.dao.PersonDao 是面向接口编程 -->
+<mapper namespace="com.dao.PersonDao">
+
+	<!-- 第一种模式 -->
+	<resultMap type="Person" id="PersonList">
+		<id column="person_id" property="personId"/>
+		<result column="username" property="username"/>
+		<result column="age" property="age"/>
+		<!-- 一对一映射    idCard是 Person 对象中的属性   表示IdCard对象   
+			column="card_id"  代表数据库字段
+			select="selectIcCard"  关联<select id="selectIcCard" parameterType="int" resultMap="IdCardList" >查询
+		   -->
+		<association property="idCard" column="card_id" javaType="IdCard" select="selectIcCard" ></association>
+	</resultMap>
+	
+	<select id="selectPerson" resultMap="PersonList">
+		select * from person
+	</select>
+	
+	<resultMap type="IdCard" id="IdCardList">
+		<id column="card_id" property="card_id"/>
+		<result column="card_num" property="cardNum"/>
+	</resultMap>
+	
+	<!-- #{id} 因为一对一模式  以上  <resultMap type="Person" id="PersonList"> 有关联  所以这个id会根据映射关系自动传入-->
+	<select id="selectIcCard" parameterType="int" resultMap="IdCardList" >
+		select * from idcard where card_id = #{id}
+	</select>
+	
+	
+	
+	<!-- 第二种模式 -->
+	<resultMap type="Person" id="PersonList2">
+		<id column="person_id" property="personId"/>
+		<result column="username" property="username"/>
+		<result column="age" property="age"/>
+		<!-- 一对一映射    idCard是 Person 对象中的属性   表示IdCard对象   
+			column="card_id"  代表数据库字段
+			select="selectIcCard"  关联<select id="selectIcCard" parameterType="int" resultMap="IdCardList" >查询
+		   -->
+		<association property="idCard" column="card_id" javaType="IdCard" >
+			<id column="card_id" property="card_id"/>
+			<result column="card_num" property="cardNum"/>
+		</association>
+	</resultMap>
+	
+	<!-- <resultMap type="IdCard" id="IdCardList2">
+		<id column="card_id" property="cardId"/>
+		<result column="card_num" property="cardNum"/>
+	</resultMap> -->
+	
+	<select id="selectPerson2" resultMap="PersonList2">
+		select * from person p,idcard i where p.card_id=i.card_id
+	</select>
+	
+	
+	<!-- 一对一的插入 -->
+	<insert id="addIdCard" useGeneratedKeys="true" keyProperty="card_id">
+		insert into idcard(card_num) values (#{cardNum})
+	</insert>
+	
+	<insert id="addPerson" useGeneratedKeys="true" keyProperty="person_id">
+		insert into person (username,age,card_id) values (#{username},#{age},#{idCard.card_id})
+	</insert>
+	
+	<!-- 删除 -->
+	<delete id="deletePerson">
+		delete from person where person_id = #{id}
+	</delete>
+	<delete id="deleteIdCard">
+		delete from idcard where idcard_id = #{id}
+	</delete>
+	
+	
+	
+	
+	
+</mapper>
