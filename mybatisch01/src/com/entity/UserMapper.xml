@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- com.dao.UserDao 是面向接口编程 -->
+<mapper namespace="com.dao.UserDao">
+	<cache></cache>
+
+
+	<!-- 根据id去查询 -->
+	<select id="selectUserById" parameterType="int" resultType="User" useCache="true">
+		select * from user where user_id = #{id}
+	</select>
+	
+	
+	<!-- 将实体类和数据库表字段对应起来 -->
+	<resultMap type="com.entity.User" id="userList">
+		<id column="user_id" property="userId"/>
+		<result column="username" property="username"/>
+		<result column="password" property="password"/>
+		<result column="age" property="age"/>
+		<result column="birth" property="birth"/>
+	</resultMap>
+	
+	
+	<!-- 查询多条语句   resultMap="userList"  <resultMap type="com.entity.User" id="userList">-->
+	<select id="selectUsers" resultMap="userList">
+		select * from user;
+	</select>
+	
+	<!-- 模糊查询 单条件 -->
+	<select id="selectUsersLike" resultMap="userList">
+		select * from user where username like #{username}
+	</select>
+	
+	
+	<!-- 模糊查询 多条件 -->
+	<select id="selectUsersLike2" resultMap="userList">
+		select * from user where username like #{username} or user_id = #{id} 
+	</select>
+	
+	<!-- 模糊查询 多条件 
+		参数用#{}去取    关于  order by 等之类的关键字后面需要用${} 取
+	-->
+	<select id="selectUsersLike3" resultMap="userList">
+		select * from user where username like #{username} or user_id = #{id}  order by ${orderName} ${orderType}
+	</select>
+	
+	<!--  多条件 
+		使用对象传参数
+	-->
+	<select id="selectUsersLike4" resultMap="userList">
+		select * from user where username like #{username} or user_id = #{userId}  order by ${orderName} ${orderType}
+	</select>
+	
+	<!--  多条件 
+		使用对象传参数   更上一个  where 1=1 不管后面的条件成不成立   这条sql都是没有问题的
+	-->
+	<select id="selectUsersLike5" resultMap="userList">
+		select * from user where 1=1
+		<if test="username != null" >
+			and username like #{username} 
+		</if>
+		<if test="userId != null" >
+			or user_id = #{userId}  
+		</if>
+		<if test="orderName != null and orderType != null" >
+			order by ${orderName} ${orderType}
+		</if>
+	</select>
+	
+	<!-- 插入一条user对象  新增数据 -->
+	<insert id="insertUser" useGeneratedKeys="true" keyProperty="user_id">
+		insert into user(username,password,age,birth) 
+			values(#{username},#{password},#{age},#{birth})
+	</insert>
+	
+	<!-- 跟新一条数据 -->
+	<!-- <update id="updateUser">
+		update user set username=#{username},password=#{password} where user_id=#{id}
+	</update> -->
+	<update id="updateUser">
+		update user 
+		<set>
+			<if test="username != null">username=#{username},</if>
+			<if test="password != null">password=#{password}</if>
+		</set>
+		where user_id=#{id}
+	</update>
+	
+	<!-- 根  in去查询  或  not in -->
+	<select id="selectUserByIds" resultMap="userList">
+		select * from user where user_id in
+		<foreach collection="list" item="idList" index="indexs" open="(" separator="," close=")">
+			#{idList}
+		</foreach>
+	
+	</select>
+	
+	
+	
+	
+	
+</mapper>
